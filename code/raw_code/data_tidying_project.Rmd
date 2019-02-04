@@ -5,6 +5,7 @@ date: "6/13/2018"
 output: html_document
 ---
 
+Installing (if needed) and loading packages needed to work on the project.
 
 ```{r setup, include=FALSE}
 ## install packages if necessary
@@ -24,9 +25,13 @@ library(ggplot2)
 ```
 ### Get Data
 
+Original raw data location.
+
 [Data Set 1](https://data.world/retail/department-store-sales): Sales from the Retail Trade and Food Services Report from the US Census. This dataset only covers Department Stores, though the report covers a wide range of retail types. [1992-2016]
 
 [Data Set 2](https://data.world/garyhoov/retail-sales-growth) US Retail Sales by Store Type with Growth Rate [2009-2014]
+
+Downloading the data and setting work data frames.
 
 ```{r data, warning=FALSE} 
 #1992-2016
@@ -45,14 +50,18 @@ colnames(df2) <- df2[1,]
 
 ### Save Raw Data
 
+Saving raw data in the directory "data/raw_data".
+
 ```{r save-data, warning=FALSE} 
 ## use saveRDS() to save each object as a .rds file 
-saveRDS(df1,file = "data_tidying_project/data/raw_data/df_department.rds")
+saveRDS(df1,file = "/cloud/project/data_tidying_project/data/raw_data/df_department.rds")
 
-saveRDS(df2,file = "data_tidying_project/data/raw_data/df_retail.rds")
+saveRDS(df2,file = "/cloud/project/data_tidying_project/data/raw_data/df_retail.rds")
 ```
 
 ### Wrangle Data
+
+Wangling df2 to get a tidy data frame ("df_retail").
 
 ```{r wrangle-df2, warning=FALSE} 
 ## an example working with df2
@@ -74,6 +83,8 @@ df_retail <- df2 %>%
   filter(business == "Retail sales, total "| business=="Department stores ")
 ```
 
+Wangling df1 to get a tidy data frame ("df_department").
+
 ```{r wrangle-df1, warning=FALSE} 
 ## now, your turn!
 ## work with df1
@@ -82,7 +93,7 @@ df_department <- df1 %>%
   separate(Period, into = c('month','year'), extra = 'drop', remove = FALSE) %>%
   ## add a column `value` which contains the 
   ## information from the `Value (in millions)` 
-  mutate(value = `Value (in millions)` * 1000000) %>%
+  mutate(value = `Value (in millions)`) %>%
   ## group the data frame by the `year` column
   group_by(year) %>%
   ## Summarize the data by creating a new column
@@ -97,10 +108,14 @@ df_department <- df1 %>%
   select(business,year,n)
 ```
 
+Merging the two data frames.
+
 ```{r merge-data, warning=FALSE} 
 ## Now, combine the two data frames
-df_total <- function_name()
+df_total <- bind_rows(list(df_retail,df_department))
 ```
+
+Making plots of each data frames.
 
 ```{r plot, warning=FALSE, fig.width=10} 
 ## Plot Retail Sales data
